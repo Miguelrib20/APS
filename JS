@@ -1,0 +1,60 @@
+const serviceForm = document.getElementById('serviceForm');
+  const serviceNameInput = document.getElementById('serviceName');
+  const serviceDescriptionInput = document.getElementById('serviceDescription');
+  const serviceList = document.getElementById('serviceList');
+  let services = [];
+
+  serviceForm.addEventListener('submit', function(event) {
+    event.preventDefault();
+    const name = serviceNameInput.value;
+    const description = serviceDescriptionInput.value;
+    if (name && description) {
+      const service = { name, description };
+      if (editIndex === -1) {
+        services.push(service);
+      } else {
+        services[editIndex] = service;
+        editIndex = -1;
+        serviceForm.querySelector('button[type="submit"]').innerText = 'Adicionar';
+      }
+      renderServices();
+      serviceNameInput.value = '';
+      serviceDescriptionInput.value = '';
+    } else {
+      alert('Por favor, preencha todos os campos.');
+    }
+  });
+
+  let editIndex = -1;
+  function editService(index) {
+    const { name, description } = services[index];
+    serviceNameInput.value = name;
+    serviceDescriptionInput.value = description;
+    editIndex = index;
+    serviceForm.querySelector('button[type="submit"]').innerText = 'Salvar';
+  }
+
+  function deleteService(index) {
+    services.splice(index, 1);
+    renderServices();
+  }
+
+  function renderServices() {
+    serviceList.innerHTML = '';
+    services.forEach((service, index) => {
+      const li = document.createElement('li');
+      const strong = document.createElement('strong');
+      strong.innerText = service.name;
+      li.appendChild(strong);
+      li.innerHTML += `: ${service.description}`;
+      const editButton = document.createElement('button');
+      editButton.innerText = 'Editar';
+      editButton.addEventListener('click', () => editService(index));
+      li.appendChild(editButton);
+      const deleteButton = document.createElement('button');
+      deleteButton.innerText = 'Excluir';
+      deleteButton.addEventListener('click', () => deleteService(index));
+      li.appendChild(deleteButton);
+      serviceList.appendChild(li);
+    });
+  }
